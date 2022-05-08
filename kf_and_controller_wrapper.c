@@ -27,6 +27,7 @@
  */
 /* %%%-SFUNWIZ_wrapper_externs_Changes_BEGIN --- EDIT HERE TO _END */
 float x_hat[4] = {0.0f};
+const float Ts = 0.0001f;
 /* %%%-SFUNWIZ_wrapper_externs_Changes_END --- EDIT HERE TO _BEGIN */
 
 /*
@@ -40,7 +41,7 @@ void kf_and_controller_Start_wrapper(real_T *xD)
  * Custom Start code goes here.
  */
 
-observer_init(0.001);
+observer_init(Ts);
 /* %%%-SFUNWIZ_wrapper_Start_Changes_END --- EDIT HERE TO _BEGIN */
 }
 /*
@@ -80,7 +81,7 @@ void kf_and_controller_Update_wrapper(const real_T *u0,
 
 const float measurement[4] = {u0[0], u0[1], u0[2], u0[3]};
 
-observer_step(measurement, 0.001f, true, x_hat);
+observer_step(measurement, Ts, true, x_hat);
 /* %%%-SFUNWIZ_wrapper_Update_Changes_END --- EDIT HERE TO _BEGIN */
 }
 
