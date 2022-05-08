@@ -2,21 +2,16 @@
 #include "observer_controller.h"
 #include "matrix_operations.h"
 
-#define PI (3.1415f)
-#define DEG_TO_RAD(x)	((x) * (PI / 180.0f))
-
-#define LPF_A_FROM_TIME_CONSTANT(Fs, Tau)   ( 1.0f / ( 1.0f + ((Tau) * (Fs)) ) )
-
 static float x_hat[N_STATES] = {0.0f};
-float L[N_STATES][N_STATES] = {{0.0f}};
-float F[N_STATES][N_STATES] = {{0.0f}};
-float F_transpose[N_STATES][N_STATES] = {{0.0f}};
-float Q_matrix[N_STATES][N_STATES] = {{0.0f}};
-float R_matrix[N_STATES][N_STATES] = {{0.0f}};
-float B_transpose[N_STATES][N_STATES] = {{0.0f}};
-float C_transpose[N_STATES][N_STATES] = {{0.0f}};
-float P[N_STATES][N_STATES] = {{0.0f}};
-float A_minus_BK[N_STATES][N_STATES] = {{0.0f}};
+static float L[N_STATES][N_STATES] = {{0.0f}};
+static float F[N_STATES][N_STATES] = {{0.0f}};
+static float F_transpose[N_STATES][N_STATES] = {{0.0f}};
+static float Q_matrix[N_STATES][N_STATES] = {{0.0f}};
+static float R_matrix[N_STATES][N_STATES] = {{0.0f}};
+static float B_transpose[N_STATES][N_STATES] = {{0.0f}};
+static float C_transpose[N_STATES][N_STATES] = {{0.0f}};
+static float P[N_STATES][N_STATES] = {{0.0f}};
+static float A_minus_BK[N_STATES][N_STATES] = {{0.0f}};
 
 void observer_init(const float timestep)
 {
@@ -125,13 +120,9 @@ void observer_step(const float measurement[N_STATES], const float timestep, cons
 
 float control_output(const float x_hat[N_STATES], const float timestep)
 {	
-	static float control_output_lpf = 0.0f;
-	
-	const bool linearity = (fabs(x_hat[2]) < DEG_TO_RAD(10.0f));
-	
 	const float control_output = -1.0f * dot_product(K[0], x_hat);
 	
-	control_output_lpf += (control_output - control_output_lpf) * LPF_A_FROM_TIME_CONSTANT(1.0f / timestep, 0.1f);
+	const float control_output_final = control_output_process(control_output, x_hat, timestep);
 	
-	return linearity ? control_output_lpf : 0.0f;
+	return control_output_final;
 }
