@@ -12,6 +12,7 @@ static float B_transpose[N_STATES][N_STATES] = {{0.0f}};
 static float C_transpose[N_STATES][N_STATES] = {{0.0f}};
 static float P[N_STATES][N_STATES] = {{0.0f}};
 static float A_minus_BK[N_STATES][N_STATES] = {{0.0f}};
+static float I[N_STATES][N_STATES] = {{0.0f}};
 
 void observer_init(const float timestep)
 {
@@ -26,6 +27,8 @@ void observer_init(const float timestep)
 	matrix_initialize(C_transpose, 0.0f);
 	matrix_initialize(P, 0.0f);
 	matrix_initialize(A_minus_BK, 0.0f);
+	
+	identity(I);
 	
 	// Discretize state transition matrix, ie., F = I + dt*A
 	matrix_scale(A, timestep, F);
@@ -45,7 +48,7 @@ void observer_init(const float timestep)
 	matrix_matrix_multiply(B, K, B_K);
 	
 	matrix_diff(A, (const float (*)[N_STATES])B_K, A_minus_BK);
-	matrix_scale((const float (*)[N_STATES])A_minus_BK, timestep, A_minus_BK);	
+	matrix_scale((const float (*)[N_STATES])A_minus_BK, timestep, A_minus_BK);
 }
 
 void observer_step(const float measurement[N_STATES], const float timestep, const bool enable, float x_hat_output[N_STATES])

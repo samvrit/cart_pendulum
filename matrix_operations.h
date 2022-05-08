@@ -30,6 +30,8 @@ void vector_initialize(float vector[N_STATES], const float init_val);
 
 void matrix_initialize(float matrix[N_STATES][N_STATES], const float init_val);
 
+void identity(float matrix[N_STATES][N_STATES]);
+
 bool matrix_inverse(const float A[N_STATES][N_STATES], float inverse[N_STATES][N_STATES]);
 
 #endif // MATRIX_OPERATIONS_H_

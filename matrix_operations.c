@@ -136,6 +136,17 @@ void matrix_initialize(float matrix[N_STATES][N_STATES], const float init_val)
 	}
 }
 
+void identity(float matrix[N_STATES][N_STATES])
+{
+	for (int i = 0; i < N_STATES; i++)
+	{
+		for (int j = 0; j < N_STATES; j++)
+		{
+			matrix[i][j] = (i == j) ? 1.0f : 0.0f;
+		}
+	}
+}
+
 /*-------------------------- Inverse functions -----------------------------*/
 
 // Adapted from geeks for geeks: https://www.geeksforgeeks.org/adjoint-inverse-matrix/

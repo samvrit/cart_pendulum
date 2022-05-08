@@ -7,7 +7,7 @@
 extern const float A[N_STATES][N_STATES];
 extern const float B[N_STATES][N_STATES];
 extern const float C[N_STATES][N_STATES];
-extern const float I[N_STATES][N_STATES];
+
 extern const float K[N_STATES][N_STATES];
 
 extern const float Q;
