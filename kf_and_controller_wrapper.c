@@ -82,7 +82,7 @@ void kf_and_controller_Update_wrapper(const real_T *u0,
 
 const float measurement[4] = {u0[0], u0[1], u0[2], u0[3]};
 
-observer_step(measurement, Ts, true, x_hat);
+observer_step(measurement, true, x_hat);
 /* %%%-SFUNWIZ_wrapper_Update_Changes_END --- EDIT HERE TO _BEGIN */
 }
 

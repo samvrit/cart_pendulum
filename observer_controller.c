@@ -51,7 +51,7 @@ void observer_init(const float timestep)
 	matrix_scale((const float (*)[N_STATES])A_minus_BK, timestep, A_minus_BK);
 }
 
-void observer_step(const float measurement[N_STATES], const float timestep, const bool enable, float x_hat_output[N_STATES])
+void observer_step(const float measurement[N_STATES], const bool enable, float x_hat_output[N_STATES])
 {
 	// P = (F * P * F') + Q
 	float F_P[N_STATES][N_STATES] = {{0.0f}};
