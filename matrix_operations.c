@@ -1,6 +1,6 @@
 #include "matrix_operations.h"
 
-void matrix_vector_multiply(float A[N_STATES][N_STATES], float x[N_STATES], float output[N_STATES])
+void matrix_vector_multiply(const float A[N_STATES][N_STATES], const float x[N_STATES], float output[N_STATES])
 {
     for(int i = 0; i < N_STATES; i++)
 	{
@@ -13,7 +13,7 @@ void matrix_vector_multiply(float A[N_STATES][N_STATES], float x[N_STATES], floa
 	}
 }
 
-void matrix_matrix_multiply(float A[N_STATES][N_STATES], float B[N_STATES][N_STATES], float output[N_STATES][N_STATES])
+void matrix_matrix_multiply(const float A[N_STATES][N_STATES], const float B[N_STATES][N_STATES], float output[N_STATES][N_STATES])
 {
 	for (int i = 0; i < N_STATES; i++)
 	{
@@ -28,7 +28,7 @@ void matrix_matrix_multiply(float A[N_STATES][N_STATES], float B[N_STATES][N_STA
 	}
 }
 
-float dot_product(float K[N_STATES], float x[N_STATES])
+float dot_product(const float K[N_STATES], const float x[N_STATES])
 {
     float sum = 0.0f;
     for(int i = 0; i < N_STATES; i++)
@@ -38,7 +38,7 @@ float dot_product(float K[N_STATES], float x[N_STATES])
     return sum;
 }
 
-void vector_sum(float x1[N_STATES], float x2[N_STATES], float output[N_STATES])
+void vector_sum(const float x1[N_STATES], const float x2[N_STATES], float output[N_STATES])
 {
 	for (int i = 0; i < N_STATES; i++)
 	{
@@ -46,7 +46,7 @@ void vector_sum(float x1[N_STATES], float x2[N_STATES], float output[N_STATES])
 	}
 }
 
-void matrix_sum(float A[N_STATES][N_STATES], float B[N_STATES][N_STATES], float output[N_STATES][N_STATES])
+void matrix_sum(const float A[N_STATES][N_STATES], const float B[N_STATES][N_STATES], float output[N_STATES][N_STATES])
 {
 	for (int i = 0; i < N_STATES; i++)
 	{
@@ -57,7 +57,7 @@ void matrix_sum(float A[N_STATES][N_STATES], float B[N_STATES][N_STATES], float 
 	}
 }
 
-void matrix_diff(float A[N_STATES][N_STATES], float B[N_STATES][N_STATES], float output[N_STATES][N_STATES])
+void matrix_diff(const float A[N_STATES][N_STATES], const float B[N_STATES][N_STATES], float output[N_STATES][N_STATES])
 {
 	for (int i = 0; i < N_STATES; i++)
 	{
@@ -68,7 +68,7 @@ void matrix_diff(float A[N_STATES][N_STATES], float B[N_STATES][N_STATES], float
 	}
 }
 
-void vector_diff(float x1[N_STATES], float x2[N_STATES], float output[N_STATES])
+void vector_diff(const float x1[N_STATES], const float x2[N_STATES], float output[N_STATES])
 {
 	for (int i = 0; i < N_STATES; i++)
 	{
@@ -76,7 +76,7 @@ void vector_diff(float x1[N_STATES], float x2[N_STATES], float output[N_STATES])
 	}
 }
 
-void vector_scale(float x[N_STATES], float a, float output[N_STATES])
+void vector_scale(const float x[N_STATES], const float a, float output[N_STATES])
 {
 	for (int i = 0; i < N_STATES; i++)
 	{
@@ -84,7 +84,7 @@ void vector_scale(float x[N_STATES], float a, float output[N_STATES])
 	}
 }
 
-void matrix_scale(float A[N_STATES][N_STATES], float a, float output[N_STATES][N_STATES])
+void matrix_scale(const float A[N_STATES][N_STATES], const float a, float output[N_STATES][N_STATES])
 {
 	for (int i = 0; i < N_STATES; i++)
 	{
@@ -95,7 +95,7 @@ void matrix_scale(float A[N_STATES][N_STATES], float a, float output[N_STATES][N
 	}
 }
 
-void matrix_transpose(float A[N_STATES][N_STATES], float output[N_STATES][N_STATES])
+void matrix_transpose(const float A[N_STATES][N_STATES], float output[N_STATES][N_STATES])
 {
 	for (int i = 0; i < N_STATES; i++)
 	{
@@ -106,13 +106,32 @@ void matrix_transpose(float A[N_STATES][N_STATES], float output[N_STATES][N_STAT
 	}
 }
 
-void matrix_assign(float input[N_STATES][N_STATES], float output[N_STATES][N_STATES])
+void matrix_assign(const float input[N_STATES][N_STATES], float output[N_STATES][N_STATES])
 {
 	for (int i = 0; i < N_STATES; i++)
 	{
 		for (int j = 0; j < N_STATES; j++)
 		{
 			output[i][j] = input[i][j];
+		}
+	}
+}
+
+void vector_initialize(float vector[N_STATES], const float init_val)
+{
+	for (int i = 0; i < N_STATES; i++)
+	{
+		vector[i] = init_val;
+	}
+}
+
+void matrix_initialize(float matrix[N_STATES][N_STATES], const float init_val)
+{
+	for (int i = 0; i < N_STATES; i++)
+	{
+		for (int j = 0; j < N_STATES; j++)
+		{
+			matrix[i][j] = init_val;
 		}
 	}
 }
@@ -147,7 +166,7 @@ static void get_cofactor(float A[N_STATES][N_STATES], float temp[N_STATES][N_STA
     }
 }
 
-static float determinant(float A[N_STATES][N_STATES], int n)
+static float determinant(const float A[N_STATES][N_STATES], int n)
 {
     float D = 0.0f;
 
@@ -169,7 +188,7 @@ static float determinant(float A[N_STATES][N_STATES], int n)
     return D;
 }
 
-static void adjoint(float A[N_STATES][N_STATES], float adj[N_STATES][N_STATES])
+static void adjoint(const float A[N_STATES][N_STATES], float adj[N_STATES][N_STATES])
 {
     if (N_STATES == 1)
     {
@@ -199,7 +218,7 @@ static void adjoint(float A[N_STATES][N_STATES], float adj[N_STATES][N_STATES])
 
 // Function to calculate and store inverse, returns false if
 // matrix is singular
-bool matrix_inverse(float A[N_STATES][N_STATES], float inverse[N_STATES][N_STATES])
+bool matrix_inverse(const float A[N_STATES][N_STATES], float inverse[N_STATES][N_STATES])
 {
     // Find determinant of A[][]
     float det = determinant(A, N_STATES);

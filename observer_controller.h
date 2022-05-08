@@ -5,7 +5,7 @@
 
 #define N_STATES (4)
 
-void observer_init(float timestep);
+void observer_init(const float timestep);
 
 void observer_step(float measurement[N_STATES], float timestep, bool enable, float x_hat_output[N_STATES]);
 
