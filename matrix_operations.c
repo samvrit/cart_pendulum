@@ -138,6 +138,8 @@ void matrix_initialize(float matrix[N_STATES][N_STATES], const float init_val)
 
 /*-------------------------- Inverse functions -----------------------------*/
 
+// Adapted from geeks for geeks: https://www.geeksforgeeks.org/adjoint-inverse-matrix/
+
 // Function to get cofactor of A[p][q] in temp[][]. n is current
 // dimension of A[][]
 static void get_cofactor(float A[N_STATES][N_STATES], float temp[N_STATES][N_STATES], int p, int q, int n)

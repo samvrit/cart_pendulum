@@ -3,7 +3,6 @@
 #include "matrix_operations.h"
 
 #define PI (3.1415f)
-#define TWO_PI (2.0f * PI)
 #define DEG_TO_RAD(x)	((x) * (PI / 180.0f))
 
 #define LPF_A_FROM_TIME_CONSTANT(Fs, Tau)   ( 1.0f / ( 1.0f + ((Tau) * (Fs)) ) )
@@ -156,11 +155,11 @@ float control_output(const float x_hat[N_STATES], const float timestep)
 {	
 	static float control_output_lpf = 0.0f;
 	
-	const bool linearity = (fabs(x_hat[2]) < DEG_TO_RAD(20.0f));
+	const bool linearity = (fabs(x_hat[2]) < DEG_TO_RAD(10.0f));
 	
 	const float control_output = -1.0f * dot_product(K[0], x_hat);
 	
-	control_output_lpf += (control_output - control_output_lpf) * LPF_A_FROM_TIME_CONSTANT(1.0f / timestep, 0.02f);
+	control_output_lpf += (control_output - control_output_lpf) * LPF_A_FROM_TIME_CONSTANT(1.0f / timestep, 0.1f);
 	
 	return linearity ? control_output_lpf : 0.0f;
 }

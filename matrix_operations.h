@@ -2,8 +2,7 @@
 #define MATRIX_OPERATIONS_H_
 
 #include <stdbool.h>
-
-#define N_STATES (4)
+#include "project_specific.h"
 
 void matrix_vector_multiply(const float A[N_STATES][N_STATES], const float x[N_STATES], float output[N_STATES]);
 

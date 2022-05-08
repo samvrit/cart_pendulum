@@ -2,8 +2,7 @@
 #define OBSERVER_CONTROLLER_H_
 
 #include <stdbool.h>
-
-#define N_STATES (4)
+#include "project_specific.h"
 
 void observer_init(const float timestep);
 
