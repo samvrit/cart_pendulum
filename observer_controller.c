@@ -27,9 +27,9 @@ const float I[4][4] = {	{1.0f, 0.0f, 0.0f, 0.0f},
 						{0.0f, 0.0f, 0.0f, 1.0f}};
 
 const float K[4][4] = {	{-1.0000, -5.2796, 97.4833, 73.0332},
-						{0.0, 0.0, 0.0, 0.0},
-						{0.0, 0.0, 0.0, 0.0},
-						{0.0, 0.0, 0.0, 0.0}};
+						{ 0.0000,  0.0000,  0.0000,  0.0000},
+						{ 0.0000,  0.0000,  0.0000,  0.0000},
+						{ 0.0000,  0.0000,  0.0000,  0.0000}};
 
 static float x_hat[N_STATES] = {0.0f};
 float L[N_STATES][N_STATES] = {{0.0f}};
@@ -80,7 +80,7 @@ void observer_init(const float timestep)
 	matrix_scale((const float (*)[N_STATES])A_minus_BK, timestep, A_minus_BK);	
 }
 
-void observer_step(float measurement[N_STATES], float timestep, bool enable, float x_hat_output[N_STATES])
+void observer_step(const float measurement[N_STATES], const float timestep, const bool enable, float x_hat_output[N_STATES])
 {
 	// P = (F * P * F') + Q
 	float F_P[N_STATES][N_STATES] = {{0.0f}};
@@ -141,20 +141,18 @@ void observer_step(float measurement[N_STATES], float timestep, bool enable, flo
 
 	float prediction_plus_correction[N_STATES] = {0.0f};
 	vector_sum((const float *)prediction, (const float *)correction, prediction_plus_correction);
-
-	float angle_wrapped = (x_hat[2] > PI) ? (x_hat[2] - TWO_PI) : x_hat[2];
-	
-	// bool linearity = (fabs(angle_wrapped) < DEG_TO_RAD(20.0f));
-	const bool linearity = true;
 	
 	for (int i = 0; i < N_STATES; i++)
 	{
-		x_hat[i] += (enable && linearity) ? prediction_plus_correction[i] : 0.0f;
+		x_hat[i] += prediction_plus_correction[i];
+		x_hat[i] = enable ? x_hat[i] : 0.0f;
 		x_hat_output[i] = x_hat[i];
 	}
 }
 
 float control_output(const float x_hat[N_STATES])
 {	
-	return ( -1.0f * dot_product(K[0], x_hat) );
+	const bool linearity = (fabs(x_hat[2]) < DEG_TO_RAD(20.0f));
+	const float control_output = -1.0f * dot_product(K[0], x_hat);
+	return linearity ? control_output : 0.0f;
 }
