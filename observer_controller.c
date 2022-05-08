@@ -6,32 +6,30 @@
 #define TWO_PI (2.0f * PI)
 #define TEN_DEG_TO_RAD (0.174533f)
 
-float A[4][4] = {	{0,    1.0000,         0,         0},
-					{0,         0,         0,         0},
-					{0,         0,         0,    1.0000},
-					{0,         0,    1.9620,         0}};
+const float A[4][4] = {	{0,    1.0000,         0,         0},
+						{0,         0,         0,         0},
+						{0,         0,         0,    1.0000},
+						{0,         0,    1.9620,         0}};
 
-float B[4][4] = {	{0.0f, 0.0f, 0.0f, 0.0f}, 
-					{1.0f, 0.0f, 0.0f, 0.0f},
-					{0.0f, 0.0f, 0.0f, 0.0f}, 
-					{0.2f, 0.0f, 0.0f, 0.0f}};
+const float B[4][4] = {	{0.0f, 0.0f, 0.0f, 0.0f}, 
+						{1.0f, 0.0f, 0.0f, 0.0f},
+						{0.0f, 0.0f, 0.0f, 0.0f}, 
+						{0.2f, 0.0f, 0.0f, 0.0f}};
 
-float C[4][4] = {	{1.0f, 0.0f, 0.0f, 0.0f},
-					{0.0f, 0.0f, 0.0f, 0.0f},
-					{0.0f, 0.0f, 1.0f, 0.0f},
-					{0.0f, 0.0f, 0.0f, 0.0f}};
+const float C[4][4] = {	{1.0f, 0.0f, 0.0f, 0.0f},
+						{0.0f, 0.0f, 0.0f, 0.0f},
+						{0.0f, 0.0f, 1.0f, 0.0f},
+						{0.0f, 0.0f, 0.0f, 0.0f}};
 
-float I[4][4] = {	{1.0f, 0.0f, 0.0f, 0.0f},
-					{0.0f, 1.0f, 0.0f, 0.0f},
-					{0.0f, 0.0f, 1.0f, 0.0f},
-					{0.0f, 0.0f, 0.0f, 1.0f}};
+const float I[4][4] = {	{1.0f, 0.0f, 0.0f, 0.0f},
+						{0.0f, 1.0f, 0.0f, 0.0f},
+						{0.0f, 0.0f, 1.0f, 0.0f},
+						{0.0f, 0.0f, 0.0f, 1.0f}};
 
-float A_minus_BK[4][4] = {	{0,         1.0000,         0,         0},
-							{1.0000,    5.2796,  -97.4833,  -73.0332},
-							{0,         0,              0,    1.0000},
-							{0.2000,    1.0559,  -17.5347,  -14.6066}};
-
-float K[4] = {-1.0000, -5.2796, 97.4833, 73.0332};
+const float K[4][4] = {	{-1.0000, -5.2796, 97.4833, 73.0332},
+						{0.0, 0.0, 0.0, 0.0},
+						{0.0, 0.0, 0.0, 0.0},
+						{0.0, 0.0, 0.0, 0.0}};
 
 static float x_hat[N_STATES] = {0.0f};
 float L[N_STATES][N_STATES] = {{0.0f}};
@@ -42,9 +40,10 @@ float R_matrix[N_STATES][N_STATES] = {{0.0f}};
 float B_transpose[N_STATES][N_STATES] = {{0.0f}};
 float C_transpose[N_STATES][N_STATES] = {{0.0f}};
 float P[N_STATES][N_STATES] = {{0.0f}};
+float A_minus_BK[N_STATES][N_STATES] = {{0.0f}};
 
-float Q = 1000.0f;
-float R = 1e-6f;
+const float Q = 1000.0f;
+const float R = 1e-6f;
 
 void observer_init(const float timestep)
 {
@@ -58,21 +57,28 @@ void observer_init(const float timestep)
 	matrix_initialize(B_transpose, 0.0f);
 	matrix_initialize(C_transpose, 0.0f);
 	matrix_initialize(P, 0.0f);
+	matrix_initialize(A_minus_BK, 0.0f);
 	
-	matrix_scale((const float (*)[N_STATES])A_minus_BK, timestep, A_minus_BK);
-	
-	matrix_scale((const float (*)[N_STATES])A, timestep, F);
-	matrix_sum((const float (*)[N_STATES])F, (const float (*)[N_STATES])I, F);
+	// Discretize state transition matrix, ie., F = I + dt*A
+	matrix_scale(A, timestep, F);
+	matrix_sum((const float (*)[N_STATES])F, I, F);
 	
 	matrix_transpose((const float (*)[N_STATES])F, F_transpose);
-	matrix_transpose((const float (*)[N_STATES])B, B_transpose);
-	matrix_transpose((const float (*)[N_STATES])C, C_transpose);
+	matrix_transpose(B, B_transpose);
+	matrix_transpose(C, C_transpose);
 	
 	float B_B_transpose[N_STATES][N_STATES] = {{0.0f}};
-	matrix_matrix_multiply((const float (*)[N_STATES])B, (const float (*)[N_STATES])B_transpose, B_B_transpose);
+	matrix_matrix_multiply(B, (const float (*)[N_STATES])B_transpose, B_B_transpose);
 	
 	matrix_scale((const float (*)[N_STATES])B_B_transpose, Q, Q_matrix);
-	matrix_scale((const float (*)[N_STATES])I, R, R_matrix);
+	matrix_scale(I, R, R_matrix);
+	
+	float B_K[N_STATES][N_STATES] = {{0.0f}};
+	matrix_matrix_multiply(B, K, B_K);
+	
+	matrix_diff(A, (const float (*)[N_STATES])B_K, A_minus_BK);
+	matrix_scale((const float (*)[N_STATES])A_minus_BK, timestep, A_minus_BK);
+	
 }
 
 void observer_step(float measurement[N_STATES], float timestep, bool enable, float x_hat_output[N_STATES])
@@ -88,7 +94,7 @@ void observer_step(float measurement[N_STATES], float timestep, bool enable, flo
 	
 	// S = (C * P * C') + R
 	float C_P[N_STATES][N_STATES] = {{0.0f}};
-	matrix_matrix_multiply((const float (*)[N_STATES])C, (const float (*)[N_STATES])P, C_P);
+	matrix_matrix_multiply(C, (const float (*)[N_STATES])P, C_P);
 	
 	float C_P_C_transpose[N_STATES][N_STATES] = {{0.0f}};
 	matrix_matrix_multiply((const float (*)[N_STATES])C_P, (const float (*)[N_STATES])C_transpose, C_P_C_transpose);
@@ -107,10 +113,10 @@ void observer_step(float measurement[N_STATES], float timestep, bool enable, flo
 	
 	// P_next = (I - (L * C)) * P;
 	float L_C[N_STATES][N_STATES] = {{0.0f}};
-	matrix_matrix_multiply((const float (*)[N_STATES])L, (const float (*)[N_STATES])C, L_C);
+	matrix_matrix_multiply((const float (*)[N_STATES])L, C, L_C);
 	
 	float I_minus_L_C[N_STATES][N_STATES] = {{0.0f}};
-	matrix_diff((const float (*)[N_STATES])I, (const float (*)[N_STATES])L_C, I_minus_L_C);
+	matrix_diff(I, (const float (*)[N_STATES])L_C, I_minus_L_C);
 	
 	float P_next[N_STATES][N_STATES] = {{0.0f}};
 	matrix_matrix_multiply((const float (*)[N_STATES])I_minus_L_C, (const float (*)[N_STATES])P, P_next);
@@ -121,7 +127,7 @@ void observer_step(float measurement[N_STATES], float timestep, bool enable, flo
 	
 	// error = y - C * x_hat_prev
 	float C_times_x_hat[N_STATES] = {0.0f};
-	matrix_vector_multiply((const float (*)[N_STATES])C, (const float *)x_hat, C_times_x_hat);
+	matrix_vector_multiply(C, (const float *)x_hat, C_times_x_hat);
 
 	float error[N_STATES] = {0.0f};
 	vector_diff((const float *)measurement, (const float *)C_times_x_hat, error);
@@ -148,7 +154,7 @@ void observer_step(float measurement[N_STATES], float timestep, bool enable, flo
 	}
 }
 
-float control_output(float x_hat[N_STATES])
+float control_output(const float x_hat[N_STATES])
 {	
-	return ( -1.0f * dot_product((const float *)K, (const float *)x_hat) );
+	return ( -1.0f * dot_product(K[0], x_hat) );
 }

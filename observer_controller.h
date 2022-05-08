@@ -9,6 +9,6 @@ void observer_init(const float timestep);
 
 void observer_step(float measurement[N_STATES], float timestep, bool enable, float x_hat_output[N_STATES]);
 
-float control_output(float x_hat[N_STATES]);
+float control_output(const float x_hat[N_STATES]);
 
 #endif // OBSERVER_CONTROLLER_H_
