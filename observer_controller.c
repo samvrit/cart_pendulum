@@ -6,6 +6,8 @@
 #define TWO_PI (2.0f * PI)
 #define DEG_TO_RAD(x)	((x) * (PI / 180.0f))
 
+#define LPF_A_FROM_TIME_CONSTANT(Fs, Tau)   ( 1.0f / ( 1.0f + ((Tau) * (Fs)) ) )
+
 const float A[4][4] = {	{0,    1.0000,         0,         0},
 						{0,         0,         0,         0},
 						{0,         0,         0,    1.0000},
@@ -150,9 +152,15 @@ void observer_step(const float measurement[N_STATES], const float timestep, cons
 	}
 }
 
-float control_output(const float x_hat[N_STATES])
+float control_output(const float x_hat[N_STATES], const float timestep)
 {	
+	static float control_output_lpf = 0.0f;
+	
 	const bool linearity = (fabs(x_hat[2]) < DEG_TO_RAD(20.0f));
+	
 	const float control_output = -1.0f * dot_product(K[0], x_hat);
-	return linearity ? control_output : 0.0f;
+	
+	control_output_lpf += (control_output - control_output_lpf) * LPF_A_FROM_TIME_CONSTANT(1.0f / timestep, 0.02f);
+	
+	return linearity ? control_output_lpf : 0.0f;
 }

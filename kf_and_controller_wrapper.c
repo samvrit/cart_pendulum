@@ -61,7 +61,7 @@ void kf_and_controller_Outputs_wrapper(const real_T *u0,
       y1[0].im = u1[0].im;
  */
 
-y0[0] = control_output((const float *)x_hat);
+y0[0] = control_output((const float *)x_hat, Ts);
 /* %%%-SFUNWIZ_wrapper_Outputs_Changes_END --- EDIT HERE TO _BEGIN */
 }
 
