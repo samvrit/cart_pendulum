@@ -4,7 +4,7 @@
 
 #define PI (3.1415f)
 #define TWO_PI (2.0f * PI)
-#define TEN_DEG_TO_RAD (0.174533f)
+#define DEG_TO_RAD(x)	((x) * (PI / 180.0f))
 
 const float A[4][4] = {	{0,    1.0000,         0,         0},
 						{0,         0,         0,         0},
@@ -43,7 +43,7 @@ float P[N_STATES][N_STATES] = {{0.0f}};
 float A_minus_BK[N_STATES][N_STATES] = {{0.0f}};
 
 const float Q = 1000.0f;
-const float R = 1e-6f;
+const float R = 1.0f;
 
 void observer_init(const float timestep)
 {
@@ -70,15 +70,14 @@ void observer_init(const float timestep)
 	float B_B_transpose[N_STATES][N_STATES] = {{0.0f}};
 	matrix_matrix_multiply(B, (const float (*)[N_STATES])B_transpose, B_B_transpose);
 	
-	matrix_scale((const float (*)[N_STATES])B_B_transpose, Q, Q_matrix);
+	matrix_scale((const float (*)[N_STATES])B_B_transpose, Q*Q, Q_matrix);
 	matrix_scale(I, R, R_matrix);
 	
 	float B_K[N_STATES][N_STATES] = {{0.0f}};
 	matrix_matrix_multiply(B, K, B_K);
 	
 	matrix_diff(A, (const float (*)[N_STATES])B_K, A_minus_BK);
-	matrix_scale((const float (*)[N_STATES])A_minus_BK, timestep, A_minus_BK);
-	
+	matrix_scale((const float (*)[N_STATES])A_minus_BK, timestep, A_minus_BK);	
 }
 
 void observer_step(float measurement[N_STATES], float timestep, bool enable, float x_hat_output[N_STATES])
@@ -145,7 +144,8 @@ void observer_step(float measurement[N_STATES], float timestep, bool enable, flo
 
 	float angle_wrapped = (x_hat[2] > PI) ? (x_hat[2] - TWO_PI) : x_hat[2];
 	
-	bool linearity = (fabs(angle_wrapped) < TEN_DEG_TO_RAD);
+	// bool linearity = (fabs(angle_wrapped) < DEG_TO_RAD(20.0f));
+	const bool linearity = true;
 	
 	for (int i = 0; i < N_STATES; i++)
 	{
