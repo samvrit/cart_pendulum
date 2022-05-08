@@ -3,5 +3,4 @@ slprj/*
 *.mexw64
 *.asv
 *.slxc
-rtwmakecfg.m
 *.autosave

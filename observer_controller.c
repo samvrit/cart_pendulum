@@ -7,31 +7,6 @@
 
 #define LPF_A_FROM_TIME_CONSTANT(Fs, Tau)   ( 1.0f / ( 1.0f + ((Tau) * (Fs)) ) )
 
-const float A[4][4] = {	{0,    1.0000,         0,         0},
-						{0,         0,         0,         0},
-						{0,         0,         0,    1.0000},
-						{0,         0,    1.9620,         0}};
-
-const float B[4][4] = {	{0.0f, 0.0f, 0.0f, 0.0f}, 
-						{1.0f, 0.0f, 0.0f, 0.0f},
-						{0.0f, 0.0f, 0.0f, 0.0f}, 
-						{0.2f, 0.0f, 0.0f, 0.0f}};
-
-const float C[4][4] = {	{1.0f, 0.0f, 0.0f, 0.0f},
-						{0.0f, 0.0f, 0.0f, 0.0f},
-						{0.0f, 0.0f, 1.0f, 0.0f},
-						{0.0f, 0.0f, 0.0f, 0.0f}};
-
-const float I[4][4] = {	{1.0f, 0.0f, 0.0f, 0.0f},
-						{0.0f, 1.0f, 0.0f, 0.0f},
-						{0.0f, 0.0f, 1.0f, 0.0f},
-						{0.0f, 0.0f, 0.0f, 1.0f}};
-
-const float K[4][4] = {	{-1.0000, -5.2796, 97.4833, 73.0332},
-						{ 0.0000,  0.0000,  0.0000,  0.0000},
-						{ 0.0000,  0.0000,  0.0000,  0.0000},
-						{ 0.0000,  0.0000,  0.0000,  0.0000}};
-
 static float x_hat[N_STATES] = {0.0f};
 float L[N_STATES][N_STATES] = {{0.0f}};
 float F[N_STATES][N_STATES] = {{0.0f}};
@@ -42,9 +17,6 @@ float B_transpose[N_STATES][N_STATES] = {{0.0f}};
 float C_transpose[N_STATES][N_STATES] = {{0.0f}};
 float P[N_STATES][N_STATES] = {{0.0f}};
 float A_minus_BK[N_STATES][N_STATES] = {{0.0f}};
-
-const float Q = 1000.0f;
-const float R = 1.0f;
 
 void observer_init(const float timestep)
 {
