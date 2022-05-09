@@ -42,7 +42,7 @@ void kf_and_controller_Start_wrapper(real_T *xD)
  * Custom Start code goes here.
  */
 
-observer_init(Ts);
+observer_init(x_hat, Ts);
 /* %%%-SFUNWIZ_wrapper_Start_Changes_END --- EDIT HERE TO _BEGIN */
 }
 /*
