@@ -15,8 +15,8 @@
 /* %%%-SFUNWIZ_wrapper_includes_Changes_BEGIN --- EDIT HERE TO _END */
 #include <math.h>
 #include <stdbool.h>
-#include "matrix_operations.h"
-#include "observer_controller.h"
+#include "kalman_filter_lqr_lib/matrix_operations.h"
+#include "kalman_filter_lqr_lib/observer_controller.h"
 #include "project_specific.h"
 /* %%%-SFUNWIZ_wrapper_includes_Changes_END --- EDIT HERE TO _BEGIN */
 #define u_width 4
