@@ -27,7 +27,7 @@ const float K[4][4] = {	{-1.0000, -5.2796, 97.4833, 73.0332},
 						{ 0.0000,  0.0000,  0.0000,  0.0000},
 						{ 0.0000,  0.0000,  0.0000,  0.0000}};
 
-const float Q = 1000.0f;
+const float Q = 1e6f;
 const float R = 1.0f;
 
 float control_output_process(const float computed_output, const float x_hat[N_STATES], const float timestep)
@@ -38,5 +38,5 @@ float control_output_process(const float computed_output, const float x_hat[N_ST
 	
 	const bool linearity = (fabs(x_hat[2]) < DEG_TO_RAD(10.0f));
 	
-	return linearity ? output_lpf : 0.0f;	
+	return linearity ? output_lpf : 0.0f;
 }
