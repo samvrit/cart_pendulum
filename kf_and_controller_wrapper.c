@@ -15,9 +15,7 @@
 /* %%%-SFUNWIZ_wrapper_includes_Changes_BEGIN --- EDIT HERE TO _END */
 #include <math.h>
 #include <stdbool.h>
-#include "kalman_filter_lqr_lib/matrix_operations.h"
 #include "kalman_filter_lqr_lib/observer_controller.h"
-#include "project_specific.h"
 /* %%%-SFUNWIZ_wrapper_includes_Changes_END --- EDIT HERE TO _BEGIN */
 #define u_width 4
 #define y_width 1
@@ -43,6 +41,11 @@ void kf_and_controller_Start_wrapper(real_T *xD)
  */
 
 observer_init(x_hat, Ts);
+
+for (int i = 0; i < 20000; i++)
+{
+	covariance_matrix_step();
+}
 /* %%%-SFUNWIZ_wrapper_Start_Changes_END --- EDIT HERE TO _BEGIN */
 }
 /*
@@ -62,7 +65,7 @@ void kf_and_controller_Outputs_wrapper(const real_T *u0,
       y1[0].im = u1[0].im;
  */
 
-y0[0] = control_output((const float *)x_hat, Ts);
+y0[0] = control_output(x_hat, Ts);
 /* %%%-SFUNWIZ_wrapper_Outputs_Changes_END --- EDIT HERE TO _BEGIN */
 }
 
@@ -82,6 +85,7 @@ void kf_and_controller_Update_wrapper(const real_T *u0,
 
 const float measurement[4] = {u0[0], u0[1], u0[2], u0[3]};
 
+covariance_matrix_step();
 observer_step(measurement, true, x_hat);
 /* %%%-SFUNWIZ_wrapper_Update_Changes_END --- EDIT HERE TO _BEGIN */
 }
